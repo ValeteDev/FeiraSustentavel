@@ -56,6 +56,19 @@ $CSRF = $_SESSION['csrf'];
                 <button id="btn-registrar-doacao">Registrar Doação</button>
             </div>
         </section>
+
+        <!-- ADICIONE ESTA SEÇÃO PARA GERENCIAMENTO -->
+        <section class="gerenciamento-links" style="margin-top: 3rem; text-align: center;">
+            <h3 style="margin-bottom: 1rem; color: #2E7D32;">Gerenciar Dados Cadastrados</h3>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="familias.php?action=list" style="background: #2196F3; color: white; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: bold;">
+                    Ver Famílias Cadastradas
+                </a>
+                <a href="doacoes.php?action=list" style="background: #FF9800; color: white; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: bold;">
+                    Ver Doações Registradas
+                </a>
+            </div>
+        </section>
     </main>
 
     <!-- Modal -->
