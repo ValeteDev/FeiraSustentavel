@@ -56,7 +56,7 @@ if ($action==='store' && $_SERVER['REQUEST_METHOD']==='POST') {
   } catch (Throwable $e) {
     $pdo->rollBack();
     if ($e instanceof PDOException && $e->getCode()==='23000') {
-      flash('E-mail já cadastrado para outra família/usuário.','error'); // UNIQUE(email)
+      flash('E-mail já cadastrado para outra família/usuário.','error');
     } else {
       flash('Erro ao cadastrar: '.$e->getMessage(),'error');
     }
@@ -169,9 +169,9 @@ $flash = get_flash();
     <div class="toolbar">
       <h1>Famílias</h1>
       <?php if (!in_array($action, ['create','edit'])): ?>
-        ?action=create+ Nova família</a>
+        <a class="btn" href="?action=create">+ Nova família</a>
       <?php else: ?>
-        ?action=list← Voltar</a>
+        <a class="btn secondary" href="?action=list">← Voltar</a>
       <?php endif; ?>
     </div>
 
@@ -210,12 +210,12 @@ $flash = get_flash();
               <td><?= e($r['situacao']) ?></td>
               <td><?= $r['renda_mensal']!==null ? number_format((float)$r['renda_mensal'],2,',','.') : '-' ?></td>
               <td>
-                <a class="btn secondary" href="?action=>
-                <form method="post" style="display:inline" onsubmit="return confirm('Excluir esta família?');">
+                <a class="btn secondary" href="?action=edit&id=<?= (int)$r['familia_id'] ?>">Editar</a>
+                <form method="post" action="?action=destroy" style="display:inline" onsubmit="return confirm('Excluir esta família?');">
                   <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
                   <input type="hidden" name="familia_id" value="<?= (int)$r['familia_id'] ?>">
                   <input type="hidden" name="usuario_id" value="<?= (int)$r['usuario_id'] ?>">
-                  ?action=destroyExcluir</button>
+                  <button class="btn danger" type="submit">Excluir</button>
                 </form>
               </td>
             </tr>
@@ -225,7 +225,7 @@ $flash = get_flash();
 
     <?php elseif ($action==='create'): ?>
       <h2>Nova família</h2>
-      <action=store
+      <form method="post" action="?action=store" class="grid">
         <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
         <div><label>Nome</label><input type="text" name="nome" required></div>
         <div><label>E-mail</label><input type="email" name="email" required></div>
@@ -243,22 +243,25 @@ $flash = get_flash();
         <div style="grid-column:1/-1"><label>Endereço</label><textarea name="endereco" rows="2"></textarea></div>
         <div style="grid-column:1/-1;display:flex;gap:8px">
           <button class="btn" type="submit">Salvar</button>
-          <action=listCancelar</a>
+          <a class="btn secondary" href="?action=list">Cancelar</a>
         </div>
       </form>
 
-    <?php elseif ($action==='edit'):
-      $id = (int)($_GET['id'] ?? 0);
-      $st = $pdo->prepare("SELECT f.id AS familia_id, u.id AS usuario_id, u.nome, u.email, u.telefone, u.endereco,
-                                  f.num_membros, f.renda_mensal, f.situacao
-                           FROM Familia f JOIN Usuario u ON u.id=f.usuario_id
-                           WHERE f.id=? AND u.tipo='familia'");
-      $st->execute([$id]); $row=$st->fetch();
-      if (!$row) { echo '<div class="flash error">Família não encontrada.</div>'; }
+    <?php elseif ($action==='edit'): ?>
+      <?php
+        $id = (int)($_GET['id'] ?? 0);
+        $st = $pdo->prepare("SELECT f.id AS familia_id, u.id AS usuario_id, u.nome, u.email, u.telefone, u.endereco,
+                                    f.num_membros, f.renda_mensal, f.situacao
+                             FROM Familia f JOIN Usuario u ON u.id=f.usuario_id
+                             WHERE f.id=? AND u.tipo='familia'");
+        $st->execute([$id]); $row=$st->fetch();
+        if (!$row) { echo '<div class="flash error">Família não encontrada.</div>'; }
       ?>
       <?php if ($row): ?>
       <h2>Editar família #<?= (int)$row['familia_id'] ?></h2>
-      <form class="grid" method="post" action="?action=update" autocomplete="off" novalid       <input type="hidden" name="familia_id" value="<?= (int)$row['familia_id'] ?>">
+      <form class="grid" method="post" action="?action=update" autocomplete="off" novalidate>
+        <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+        <input type="hidden" name="familia_id" value="<?= (int)$row['familia_id'] ?>">
         <input type="hidden" name="usuario_id" value="<?= (int)$row['usuario_id'] ?>">
         <div><label>Nome</label><input type="text" name="nome" required value="<?= e($row['nome']) ?>"></div>
         <div><label>E-mail</label><input type="email" name="email" required value="<?= e($row['email']) ?>"></div>
@@ -277,14 +280,14 @@ $flash = get_flash();
         <div style="grid-column:1/-1"><label>Endereço</label><textarea name="endereco" rows="2"><?= e($row['endereco'] ?? '') ?></textarea></div>
         <div style="grid-column:1/-1;display:flex;gap:8px">
           <button class="btn" type="submit">Atualizar</button>
-          ?action=listCancelar</a>
+          <a class="btn secondary" href="?action=list">Cancelar</a>
         </div>
       </form>
       <?php endif; ?>
 
     <?php else: ?>
       <div class="flash error">Ação inválida.</div>
-      <action=listVoltar</a>
+      <a class="btn secondary" href="?action=list">Voltar</a>
     <?php endif; ?>
   </div>
 </div>
