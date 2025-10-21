@@ -73,7 +73,7 @@ $CSRF = $_SESSION['csrf'];
 
     <!-- Modal -->
     <div class="modal-container" id="modal-container" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">p
             <button class="fechar-modal" id="fechar-modal" aria-label="Fechar">×</button>
             <div id="conteudo-modal"></div>
         </div>
